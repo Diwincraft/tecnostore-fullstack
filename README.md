@@ -8,19 +8,19 @@ Aplicación web desarrollada con Flask, SQLite, Bootstrap y JavaScript para la a
 
 ### Página principal
 
-![Inicio](home.png)
+![Inicio](static/screenshots/home.png)
 
 ### Panel administrador
 
-![Admin](admin.png)
+![Admin](static/screenshots/admin.png)
 
 ### Agregar productos
 
-![Agregar productos](add.png)
+![Agregar productos](static/screenshots/add.png)
 
 ### Login
 
-![Login](login.png)
+![Login](static/screenshots/login.png)
 
 ---
 
