@@ -1,155 +1,75 @@
-# TecnoStore Blog
+# TecnoStore FullStack
 
-Aplicación web desarrollada con Flask, SQLite, Bootstrap y JavaScript para la administración y visualización de productos tecnológicos.
+Sistema web Full Stack desarrollado con Flask, SQLite, Bootstrap y JavaScript para la administración y visualización de productos tecnológicos.
 
 ---
 
-## Vista previa
+## Tecnologías
 
-### Página principal
-
-![Inicio](static/screenshots/home.png)
-
-### Panel administrador
-
-![Admin](static/screenshots/admin.png)
-
-### Agregar productos
-
-![Agregar productos](static/screenshots/add.png)
-
-### Login
-
-![Login](static/screenshots/login.png)
+- Python
+- Flask
+- SQLite
+- Bootstrap 5
+- JavaScript
+- HTML5
+- CSS3
+- Git & GitHub
 
 ---
 
 ## Características
 
-- Sistema de login para administrador
-- Panel administrativo
-- CRUD completo de productos
-- Subida de imágenes
-- Carrito de compras
-- Diseño responsive
-- Base de datos SQLite
-- Interfaz moderna con Bootstrap 5
-- Integración con GitHub
+✅ Login administrador  
+✅ CRUD de productos  
+✅ Subida de imágenes  
+✅ Carrito de compras  
+✅ Panel administrativo  
+✅ Base de datos SQLite  
+✅ Diseño responsive  
 
 ---
 
-## Tecnologías utilizadas
+## Capturas
 
-| Tecnología | Uso |
-|---|---|
-| Python | Backend |
-| Flask | Framework web |
-| SQLite | Base de datos |
-| Bootstrap 5 | Diseño responsive |
-| HTML5 | Estructura |
-| CSS3 | Estilos |
-| JavaScript | Interactividad |
-| Git | Control de versiones |
-| GitHub | Repositorio remoto |
+### Página principal
 
----
+![Home](static/screenshots/home.png)
 
-## Estructura del proyecto
+### Login administrador
 
-```bash
-technostore-blog/
-│
-├── app.py
-├── database.db
-├── schema.sql
-├── crear_admin.py
-├── init_db.py
-│
-├── static/
-│   ├── css/
-│   ├── js/
-│   ├── uploads/
-│   └── screenshots/
-│
-├── templates/
-│   ├── index.html
-│   ├── login.html
-│   ├── admin.html
-│   ├── agregar_producto.html
-│   └── editar_producto.html
-│
-└── README.md
-```
+![Login](static/screenshots/login.png)
+
+### Panel administrador
+
+![Admin](static/screenshots/admin.png)
+
+### Agregar producto
+
+![Agregar](static/screenshots/add.png)
 
 ---
 
 ## Instalación
 
-### 1. Clonar repositorio
+### Clonar repositorio
 
 ```bash
-git clone https://github.com/Diwincraft/technostore-blog.git
+git clone https://github.com/Diwincraft/tecnostore-fullstack.git
 ```
 
----
-
-### 2. Entrar al proyecto
+### Entrar al proyecto
 
 ```bash
-cd technostore-blog
+cd tecnostore-fullstack
 ```
 
----
-
-### 3. Crear entorno virtual
+### Instalar Flask
 
 ```bash
-python -m venv venv
+pip install flask
 ```
 
----
-
-### 4. Activar entorno virtual
-
-#### Windows
-
-```bash
-venv\Scripts\activate
-```
-
-#### Linux / Mac
-
-```bash
-source venv/bin/activate
-```
-
----
-
-### 5. Instalar dependencias
-
-```bash
-pip install flask werkzeug
-```
-
----
-
-### 6. Inicializar base de datos
-
-```bash
-python init_db.py
-```
-
----
-
-### 7. Crear usuario administrador
-
-```bash
-python crear_admin.py
-```
-
----
-
-### 8. Ejecutar proyecto
+### Ejecutar proyecto
 
 ```bash
 python app.py
@@ -157,85 +77,15 @@ python app.py
 
 ---
 
-## Acceso administrador
+## Credenciales
 
-| Campo | Valor |
+| Usuario | Contraseña |
 |---|---|
-| Usuario | admin |
-| Contraseña | 123456 |
-
----
-
-## Funcionalidades principales
-
-### Sistema de autenticación
-
-- Inicio de sesión seguro
-- Hash de contraseñas
-- Protección de rutas
-
-### Gestión de productos
-
-- Crear productos
-- Editar productos
-- Eliminar productos
-- Subida de imágenes
-
-### Catálogo dinámico
-
-- Productos cargados desde SQLite
-- Renderizado dinámico con Jinja2
-- Interfaz responsive
-
-### Carrito de compras
-
-- Agregar productos
-- Contador dinámico
-- Total de compra
-
----
-
-## Capturas del sistema
-
-### Home
-
-![Home](static/screenshots/home.png)
-
-### Login
-
-![Login](static/screenshots/login.png)
-
-### Dashboard
-
-![Dashboard](static/screenshots/dashboard.png)
-
-### Editar productos
-
-![Editar](static/screenshots/editar.png)
-
----
-
-## Mejoras futuras
-
-- Sistema de pagos
-- Roles de usuario
-- API REST
-- Panel estadístico
-- Dashboard avanzado
-- Dark Mode
-- Búsqueda avanzada
-- Categorías dinámicas
+| admin | 123456 |
 
 ---
 
 ## Autor
 
-**Omar Rivera Peralta**
-
+**Omar Rivera Peralta**  
 Estudiante de Ingeniería en Sistemas Computacionales.
-
----
-
-## Licencia
-
-Proyecto desarrollado con fines académicos y educativos.
