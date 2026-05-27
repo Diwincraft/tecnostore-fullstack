@@ -66,6 +66,31 @@ def seed_admin():
     conexion.close()
 
 seed_admin()
+
+def seed_productos():
+    conexion = sqlite3.connect("database.db")
+    cursor = conexion.cursor()
+
+    cursor.execute("SELECT COUNT(*) FROM productos")
+    cantidad = cursor.fetchone()[0]
+
+    if cantidad == 0:
+        productos_demo = [
+            ("Laptop ASUS", 21000, "Laptops", "asus.jpg"),
+            ("Mouse Logitech", 450, "Accesorios", "mouse.jpg"),
+            ("Teclado Mecánico", 900, "Accesorios", "teclado.jpg"),
+            ("Monitor 24\"", 2500, "Pantallas", "monitor.jpg")
+        ]
+
+        cursor.executemany("""
+            INSERT INTO productos (nombre, precio, categoria, imagen)
+            VALUES (?, ?, ?, ?)
+        """, productos_demo)
+
+    conexion.commit()
+    conexion.close()
+
+seed_productos()
 # =========================================
 # HOME
 # =========================================
