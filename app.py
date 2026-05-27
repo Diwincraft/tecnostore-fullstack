@@ -46,6 +46,26 @@ def init_db():
     conexion.close()
 
 init_db()
+def seed_admin():
+    conexion = sqlite3.connect("database.db")
+    cursor = conexion.cursor()
+
+    cursor.execute("SELECT * FROM usuarios WHERE username = 'admin'")
+    existe = cursor.fetchone()
+
+    if not existe:
+        cursor.execute("""
+            INSERT INTO usuarios (username, password)
+            VALUES (?, ?)
+        """, (
+            "admin",
+            generate_password_hash("123456")
+        ))
+
+    conexion.commit()
+    conexion.close()
+
+seed_admin()
 # =========================================
 # HOME
 # =========================================
