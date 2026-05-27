@@ -20,6 +20,32 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # Crear carpeta si no existe
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
+def init_db():
+    conexion = sqlite3.connect("database.db")
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS productos (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nombre TEXT,
+            precio REAL,
+            categoria TEXT,
+            imagen TEXT
+        )
+    """)
+
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS usuarios (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT,
+            password TEXT
+        )
+    """)
+
+    conexion.commit()
+    conexion.close()
+
+init_db()
 # =========================================
 # HOME
 # =========================================
@@ -222,6 +248,7 @@ def eliminar(id):
     conexion.close()
 
     return redirect('/admin')
+
 
 # =========================================
 # EJECUCIÓN LOCAL
