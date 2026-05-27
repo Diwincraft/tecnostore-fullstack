@@ -1,18 +1,8 @@
-from flask import Flask
-from flask import render_template
-from flask import request
-from flask import redirect
-from flask import session
-
+from flask import Flask, render_template, request, redirect, session
 import sqlite3
 import os
-
 from werkzeug.utils import secure_filename
-
-from werkzeug.security import (
-    generate_password_hash,
-    check_password_hash
-)
+from werkzeug.security import generate_password_hash, check_password_hash
 
 # =========================================
 # CONFIGURACIÓN
@@ -20,16 +10,14 @@ from werkzeug.security import (
 
 app = Flask(__name__)
 
-app.secret_key = os.environ.get("SECRET_KEY")
+# SECRET_KEY con fallback para evitar crash en Render
+app.secret_key = os.environ.get("SECRET_KEY", "dev_default_key")
 
 # Carpeta de imágenes
-
 UPLOAD_FOLDER = 'static/uploads'
-
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # Crear carpeta si no existe
-
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # =========================================
@@ -38,27 +26,16 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 @app.route('/')
 def inicio():
-
     conexion = sqlite3.connect("database.db")
-
     conexion.row_factory = sqlite3.Row
-
     cursor = conexion.cursor()
 
-    cursor.execute("""
-
-        SELECT * FROM productos
-
-    """)
-
+    cursor.execute("SELECT * FROM productos")
     productos = cursor.fetchall()
 
     conexion.close()
 
-    return render_template(
-        "index.html",
-        productos=productos
-    )
+    return render_template("index.html", productos=productos)
 
 # =========================================
 # LOGIN
@@ -66,44 +43,31 @@ def inicio():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-
     if request.method == 'POST':
 
         username = request.form['username']
-
         password = request.form['password']
 
         conexion = sqlite3.connect("database.db")
-
         conexion.row_factory = sqlite3.Row
-
         cursor = conexion.cursor()
 
-        cursor.execute("""
-
-            SELECT * FROM usuarios
-
-            WHERE username = ?
-
-        """, (
-            username,
-        ))
+        cursor.execute(
+            "SELECT * FROM usuarios WHERE username = ?",
+            (username,)
+        )
 
         usuario = cursor.fetchone()
-
         conexion.close()
 
-        if usuario and check_password_hash(
-            usuario['password'],
-            password
-        ):
+        if usuario and check_password_hash(usuario['password'], password):
 
             session['usuario'] = usuario['username']
+            session.permanent = True
 
             return redirect('/admin')
 
         else:
-
             return render_template(
                 'login.html',
                 error="Usuario o contraseña incorrectos"
@@ -117,9 +81,7 @@ def login():
 
 @app.route('/logout')
 def logout():
-
     session.pop('usuario', None)
-
     return redirect('/login')
 
 # =========================================
@@ -128,65 +90,32 @@ def logout():
 
 @app.route('/admin')
 def admin():
-
     if 'usuario' not in session:
-
         return redirect('/login')
 
     conexion = sqlite3.connect("database.db")
-
     conexion.row_factory = sqlite3.Row
-
     cursor = conexion.cursor()
 
-    # PRODUCTOS
-
-    cursor.execute("""
-
-        SELECT * FROM productos
-
-    """)
-
+    cursor.execute("SELECT * FROM productos")
     productos = cursor.fetchall()
 
-    # TOTAL PRODUCTOS
-
-    cursor.execute("""
-
-        SELECT COUNT(*) FROM productos
-
-    """)
-
+    cursor.execute("SELECT COUNT(*) FROM productos")
     total_productos = cursor.fetchone()[0]
 
-    # TOTAL USUARIOS
-
-    cursor.execute("""
-
-        SELECT COUNT(*) FROM usuarios
-
-    """)
-
+    cursor.execute("SELECT COUNT(*) FROM usuarios")
     total_usuarios = cursor.fetchone()[0]
-
-    # VENTAS SIMULADAS
 
     ventas = total_productos * 5
 
     conexion.close()
 
     return render_template(
-
         "admin.html",
-
         productos=productos,
-
         total_productos=total_productos,
-
         total_usuarios=total_usuarios,
-
         ventas=ventas
-
     )
 
 # =========================================
@@ -195,70 +124,36 @@ def admin():
 
 @app.route('/agregar', methods=['GET', 'POST'])
 def agregar():
-
     if 'usuario' not in session:
-
         return redirect('/login')
 
     if request.method == 'POST':
 
         nombre = request.form['nombre']
-
         precio = request.form['precio']
-
         categoria = request.form['categoria']
-
-        # IMAGEN
 
         archivo = request.files['imagen']
 
-        nombre_archivo = secure_filename(
-            archivo.filename
-        )
+        nombre_archivo = secure_filename(archivo.filename)
 
-        ruta = os.path.join(
-            app.config['UPLOAD_FOLDER'],
-            nombre_archivo
-        )
-
+        ruta = os.path.join(app.config['UPLOAD_FOLDER'], nombre_archivo)
         archivo.save(ruta)
 
-        imagen = nombre_archivo
-
-        # GUARDAR EN BD
-
         conexion = sqlite3.connect("database.db")
-
         cursor = conexion.cursor()
 
         cursor.execute("""
-
-            INSERT INTO productos
-            (
-                nombre,
-                precio,
-                categoria,
-                imagen
-            )
-
+            INSERT INTO productos (nombre, precio, categoria, imagen)
             VALUES (?, ?, ?, ?)
-
-        """, (
-            nombre,
-            precio,
-            categoria,
-            imagen
-        ))
+        """, (nombre, precio, categoria, nombre_archivo))
 
         conexion.commit()
-
         conexion.close()
 
         return redirect('/admin')
 
-    return render_template(
-        "agregar_producto.html"
-    )
+    return render_template("agregar_producto.html")
 
 # =========================================
 # EDITAR PRODUCTO
@@ -266,111 +161,48 @@ def agregar():
 
 @app.route('/editar/<int:id>', methods=['GET', 'POST'])
 def editar(id):
-
     if 'usuario' not in session:
-
         return redirect('/login')
 
     conexion = sqlite3.connect("database.db")
-
     conexion.row_factory = sqlite3.Row
-
     cursor = conexion.cursor()
-
-    # =====================================
-    # ACTUALIZAR PRODUCTO
-    # =====================================
 
     if request.method == 'POST':
 
         nombre = request.form['nombre']
-
         precio = request.form['precio']
-
         categoria = request.form['categoria']
 
-        # OBTENER PRODUCTO ACTUAL
-
-        cursor.execute(
-            "SELECT * FROM productos WHERE id = ?",
-            (id,)
-        )
-
+        cursor.execute("SELECT * FROM productos WHERE id = ?", (id,))
         producto_actual = cursor.fetchone()
 
         imagen = producto_actual['imagen']
 
-        # VERIFICAR NUEVA IMAGEN
+        archivo = request.files.get('imagen')
 
-        if 'imagen' in request.files:
-
-            archivo = request.files['imagen']
-
-            if archivo.filename != "":
-
-                nombre_archivo = secure_filename(
-                    archivo.filename
-                )
-
-                ruta = os.path.join(
-                    app.config['UPLOAD_FOLDER'],
-                    nombre_archivo
-                )
-
-                archivo.save(ruta)
-
-                imagen = nombre_archivo
-
-        # ACTUALIZAR EN BD
+        if archivo and archivo.filename != "":
+            nombre_archivo = secure_filename(archivo.filename)
+            ruta = os.path.join(app.config['UPLOAD_FOLDER'], nombre_archivo)
+            archivo.save(ruta)
+            imagen = nombre_archivo
 
         cursor.execute("""
-
             UPDATE productos
-
-            SET
-                nombre = ?,
-                precio = ?,
-                categoria = ?,
-                imagen = ?
-
+            SET nombre = ?, precio = ?, categoria = ?, imagen = ?
             WHERE id = ?
-
-        """, (
-            nombre,
-            precio,
-            categoria,
-            imagen,
-            id
-        ))
+        """, (nombre, precio, categoria, imagen, id))
 
         conexion.commit()
-
         conexion.close()
 
         return redirect('/admin')
 
-    # =====================================
-    # OBTENER PRODUCTO
-    # =====================================
-
-    cursor.execute("""
-
-        SELECT * FROM productos
-
-        WHERE id = ?
-
-    """, (
-        id,
-    ))
-
+    cursor.execute("SELECT * FROM productos WHERE id = ?", (id,))
     producto = cursor.fetchone()
-
     conexion.close()
 
-    return render_template(
-        'editar_producto.html',
-        producto=producto
-    )
+    return render_template('editar_producto.html', producto=producto)
 
 # =========================================
 # ELIMINAR PRODUCTO
@@ -378,33 +210,21 @@ def editar(id):
 
 @app.route('/eliminar/<int:id>')
 def eliminar(id):
-
     if 'usuario' not in session:
-
         return redirect('/login')
 
     conexion = sqlite3.connect("database.db")
-
     cursor = conexion.cursor()
 
-    cursor.execute("""
-
-        DELETE FROM productos
-
-        WHERE id = ?
-
-    """, (
-        id,
-    ))
+    cursor.execute("DELETE FROM productos WHERE id = ?", (id,))
 
     conexion.commit()
-
     conexion.close()
 
     return redirect('/admin')
 
 # =========================================
-# EJECUTAR APP
+# EJECUCIÓN LOCAL
 # =========================================
 
 if __name__ == '__main__':
