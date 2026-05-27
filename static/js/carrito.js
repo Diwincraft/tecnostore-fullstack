@@ -33,8 +33,12 @@ function agregarAlCarrito(id, nombre, precio, imagen){
     const producto = {
 
         id: id,
+
         nombre: nombre,
-        precio: precio,
+
+        // CONVERTIR A NÚMERO
+        precio: parseFloat(precio),
+
         imagen: imagen
 
     };
@@ -50,8 +54,11 @@ function agregarAlCarrito(id, nombre, precio, imagen){
 function guardarCarrito() {
 
     localStorage.setItem(
+
         "carrito",
+
         JSON.stringify(carrito)
+
     );
 
 }
@@ -59,17 +66,27 @@ function guardarCarrito() {
 function actualizarCarrito() {
 
     const {
+
         contador,
+
         listaCarrito,
+
         totalCarrito
+
     } = obtenerElementos();
 
     if (
+
         !contador ||
+
         !listaCarrito ||
+
         !totalCarrito
+
     ) {
+
         return;
+
     }
 
     contador.innerText = carrito.length;
@@ -80,7 +97,8 @@ function actualizarCarrito() {
 
     carrito.forEach((producto, index) => {
 
-        total += producto.precio;
+        // ASEGURAR NÚMERO
+        total += parseFloat(producto.precio);
 
         listaCarrito.innerHTML += `
 
@@ -89,17 +107,23 @@ function actualizarCarrito() {
                 <div>
 
                     <h5>
+
                         ${producto.nombre}
+
                     </h5>
 
                     <p>
+
                         $${producto.precio} MXN
+
                     </p>
 
                 </div>
 
                 <button
+
                     class="btn btn-danger btn-sm"
+
                     onclick="eliminarProducto(${index})">
 
                     <i class="bi bi-trash"></i>
@@ -112,7 +136,8 @@ function actualizarCarrito() {
 
     });
 
-    totalCarrito.innerText = total;
+    // FORMATO DECIMAL
+    totalCarrito.innerText = total.toFixed(2);
 
 }
 
@@ -139,13 +164,17 @@ function vaciarCarrito() {
 function abrirCarrito() {
 
     const modalElemento = document.getElementById(
+
         "modalCarrito"
+
     );
 
     if (!modalElemento) return;
 
     const modal = new bootstrap.Modal(
+
         modalElemento
+
     );
 
     modal.show();
