@@ -46,7 +46,9 @@ def inicio():
     cursor = conexion.cursor()
 
     cursor.execute("""
+
         SELECT * FROM productos
+
     """)
 
     productos = cursor.fetchall()
@@ -140,7 +142,9 @@ def admin():
     # PRODUCTOS
 
     cursor.execute("""
+
         SELECT * FROM productos
+
     """)
 
     productos = cursor.fetchall()
@@ -148,7 +152,9 @@ def admin():
     # TOTAL PRODUCTOS
 
     cursor.execute("""
+
         SELECT COUNT(*) FROM productos
+
     """)
 
     total_productos = cursor.fetchone()[0]
@@ -156,7 +162,9 @@ def admin():
     # TOTAL USUARIOS
 
     cursor.execute("""
+
         SELECT COUNT(*) FROM usuarios
+
     """)
 
     total_usuarios = cursor.fetchone()[0]
@@ -217,7 +225,7 @@ def agregar():
 
         imagen = nombre_archivo
 
-        # GUARDAR EN BASE DE DATOS
+        # GUARDAR EN BD
 
         conexion = sqlite3.connect("database.db")
 
@@ -269,6 +277,10 @@ def editar(id):
 
     cursor = conexion.cursor()
 
+    # =====================================
+    # ACTUALIZAR PRODUCTO
+    # =====================================
+
     if request.method == 'POST':
 
         nombre = request.form['nombre']
@@ -277,64 +289,59 @@ def editar(id):
 
         categoria = request.form['categoria']
 
-        archivo = request.files['imagen']
+        # OBTENER PRODUCTO ACTUAL
 
-        # SI SUBE NUEVA IMAGEN
+        cursor.execute(
+            "SELECT * FROM productos WHERE id = ?",
+            (id,)
+        )
 
-        if archivo.filename != "":
+        producto_actual = cursor.fetchone()
 
-            nombre_archivo = secure_filename(
-                archivo.filename
-            )
+        imagen = producto_actual['imagen']
 
-            ruta = os.path.join(
-                app.config['UPLOAD_FOLDER'],
-                nombre_archivo
-            )
+        # VERIFICAR NUEVA IMAGEN
 
-            archivo.save(ruta)
+        if 'imagen' in request.files:
 
-            imagen = nombre_archivo
+            archivo = request.files['imagen']
 
-            cursor.execute("""
+            if archivo.filename != "":
 
-                UPDATE productos
+                nombre_archivo = secure_filename(
+                    archivo.filename
+                )
 
-                SET
-                    nombre = ?,
-                    precio = ?,
-                    categoria = ?,
-                    imagen = ?
+                ruta = os.path.join(
+                    app.config['UPLOAD_FOLDER'],
+                    nombre_archivo
+                )
 
-                WHERE id = ?
+                archivo.save(ruta)
 
-            """, (
-                nombre,
-                precio,
-                categoria,
-                imagen,
-                id
-            ))
+                imagen = nombre_archivo
 
-        else:
+        # ACTUALIZAR EN BD
 
-            cursor.execute("""
+        cursor.execute("""
 
-                UPDATE productos
+            UPDATE productos
 
-                SET
-                    nombre = ?,
-                    precio = ?,
-                    categoria = ?
+            SET
+                nombre = ?,
+                precio = ?,
+                categoria = ?,
+                imagen = ?
 
-                WHERE id = ?
+            WHERE id = ?
 
-            """, (
-                nombre,
-                precio,
-                categoria,
-                id
-            ))
+        """, (
+            nombre,
+            precio,
+            categoria,
+            imagen,
+            id
+        ))
 
         conexion.commit()
 
@@ -342,7 +349,9 @@ def editar(id):
 
         return redirect('/admin')
 
+    # =====================================
     # OBTENER PRODUCTO
+    # =====================================
 
     cursor.execute("""
 

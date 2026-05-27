@@ -28,13 +28,16 @@ function obtenerElementos() {
 
 }
 
-function agregarAlCarrito(id) {
+function agregarAlCarrito(id, nombre, precio, imagen){
 
-    const producto = productos.find(
-        p => p.id === id
-    );
+    const producto = {
 
-    if (!producto) return;
+        id: id,
+        nombre: nombre,
+        precio: precio,
+        imagen: imagen
+
+    };
 
     carrito.push(producto);
 

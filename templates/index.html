@@ -430,11 +430,69 @@
 
         </div>
 
-        <div 
-            class="row g-4"
-            id="contenedor-productos">
+        Por esto:
+
+<div class="row g-4">
+
+    {% for producto in productos %}
+
+    <div class="col-md-3">
+
+        <div class="card shadow-sm h-100">
+
+            <!-- IMAGEN -->
+
+            <img
+                src="{{ url_for('static', filename='uploads/' + producto.imagen) }}"
+                class="card-img-top"
+                alt="{{ producto.nombre }}">
+
+            <!-- BODY -->
+
+            <div class="card-body text-center">
+
+                <h5 class="card-title">
+
+                    {{ producto.nombre }}
+
+                </h5>
+
+                <p class="text-primary fw-bold">
+
+                    ${{ producto.precio }} MXN
+
+                </p>
+
+                <p class="text-muted">
+
+                    {{ producto.categoria }}
+
+                </p>
+
+                <!-- BOTÓN -->
+
+                <button
+                    class="btn btn-dark"
+                    onclick="agregarAlCarrito(
+                        {{ producto.id }},
+                        '{{ producto.nombre }}',
+                        {{ producto.precio }},
+                        '{{ producto.imagen }}'
+                    )">
+
+                    Agregar al carrito
+
+                </button>
+
+            </div>
 
         </div>
+
+    </div>
+
+    {% endfor %}
+
+</div>
 
     </section>
 
@@ -655,7 +713,6 @@
 
     <script src="{{ url_for('static', filename='js/app.js') }}"></script>
 
-    <script src="{{ url_for('static', filename='js/carrito.js') }}"></script>
 
 </body>
 
